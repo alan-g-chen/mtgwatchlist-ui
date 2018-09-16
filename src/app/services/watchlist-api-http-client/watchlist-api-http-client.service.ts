@@ -14,9 +14,7 @@ export class WatchlistApiHttpClientService {
   public GetWatchlistResults(accessToken: string): Observable<HttpResponse<any>> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
-      'facebook-access-token': accessToken,
-      'Access-Control-Allow-Origin': 'http://localhost:4200',
-      'Access-Control-Allow-Credentials': 'true'
+      'facebook-access-token': accessToken
     });
 
     const params = new HttpParams();
@@ -31,9 +29,7 @@ export class WatchlistApiHttpClientService {
     const headers = new HttpHeaders({
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      'facebook-access-token': accessToken,
-      'Access-Control-Allow-Origin': 'http://localhost:4200',
-      'Access-Control-Allow-Credentials': 'true'
+      'facebook-access-token': accessToken
     });
 
     const params = new HttpParams();

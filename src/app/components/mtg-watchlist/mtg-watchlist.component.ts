@@ -6,7 +6,7 @@ import { MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { WatchlistApiHttpClientService } from '../../services/watchlist-api-http-client/watchlist-api-http-client.service'
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 import { ButtonOpts } from 'mat-progress-buttons'
-import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
+import { GathererDialogComponent } from '../gatherer-dialog/gatherer-dialog.component';
 
 @Component({
   selector: 'app-mtg-watchlist',
@@ -65,6 +65,15 @@ export class MtgWatchlistComponent implements OnInit {
 
   public isAuthenticated(): boolean {
     return (null != this.accessToken);
+  }
+
+  public openViewCardDialog(cardName: string, setName: string): void {
+    const dialogRef = this.dialog.open(GathererDialogComponent, {
+      width: 'flex',
+      data: {cardName: cardName, setName: setName}
+    });
+
+    dialogRef.afterClosed().subscribe(result => { });
   }
 
   public getItemsFromApi(): void {

@@ -10,8 +10,10 @@ export const environment = {
 
   // API info
   watchlistApiGetCardsUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist",
-  watchlistApiAddCardUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist/add"
-  //watchlistApiGetCardsUri: "http://localhost:63516/api/watchlist"
+  watchlistApiAddCardUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist/add",
+  //watchlistApiGetCardsUri: "http://localhost:63516/api/watchlist",
+
+  scryfallApiFuzzyFetchUrl: "https://api.scryfall.com/cards/named?fuzzy="
 };
 
 /*

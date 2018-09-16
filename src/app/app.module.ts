@@ -21,6 +21,8 @@ import {
   MatDialogModule
 } from '@angular/material';
 
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 import { AppComponent } from './app.component';
@@ -33,9 +35,12 @@ import { environment } from "../environments/environment";
 import { MtgWatchlistComponent } from './components/mtg-watchlist/mtg-watchlist.component'
 
 import { WatchlistApiHttpClientService } from './services/watchlist-api-http-client/watchlist-api-http-client.service';
+import { ScryfallApiHttpClientService } from './services/scryfall-api-http-client/scryfall-api-http-client.service'
+
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component'
 
 import { MatProgressButtons } from 'mat-progress-buttons';
+import { GathererDialogComponent } from './components/gatherer-dialog/gatherer-dialog.component';
 
 export function getAuthServiceConfigs() {
   let config = new SocialServiceConfig()
@@ -45,13 +50,15 @@ export function getAuthServiceConfigs() {
 
 @NgModule({
   entryComponents: [
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    GathererDialogComponent
   ],
   declarations: [
     AppComponent,
     FacebookSigninComponent,
     MtgWatchlistComponent,
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    GathererDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -75,7 +82,8 @@ export function getAuthServiceConfigs() {
     Ng6SocialButtonModule,
     HttpClientModule,
     HttpModule,
-    MatProgressButtons
+    MatProgressButtons,
+    NgbTooltipModule
   ],
   exports: [
     MatButtonModule,
@@ -96,7 +104,8 @@ export function getAuthServiceConfigs() {
       provide: SocialServiceConfig,
       useFactory: getAuthServiceConfigs
     },
-    WatchlistApiHttpClientService
+    WatchlistApiHttpClientService,
+    ScryfallApiHttpClientService
   ],
   bootstrap: [AppComponent]
 })

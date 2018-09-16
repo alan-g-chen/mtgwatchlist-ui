@@ -25,7 +25,8 @@
       <ng-container matColumnDef="Button">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
         <mat-cell *matCellDef="let row" >
-             <button mat-raised-button >Edit</button> 
+             <button mat-raised-button >Edit!</button> 
+          <button mat-button type="button" class="btn btn-outline-secondary" (click)="openViewCardDialog(row.cardName, row.setName)">View card!</button>
         </mat-cell>
     </ng-container>
    
@@ -36,7 +37,6 @@
     <br>
     
     <progress-bar-button [options]="fetchCardsButtonOptions" (onClick)="getItemsFromApi()"></progress-bar-button>
-   
   </div>
   <br>
   <mat-divider></mat-divider>

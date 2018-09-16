@@ -1,0 +1,9 @@
+<div *ngIf="!imageAvailable() && !this.cardNotFound">
+    Loading...
+</div>
+<div *ngIf="this.cardNotFound">
+    A card by this name was not found.
+</div>
+<div *ngIf="imageAvailable()">
+  <img [src]="this.cardImageUri">
+</div>
