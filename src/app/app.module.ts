@@ -26,7 +26,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { AppComponent } from './app.component';
 import { FacebookSigninComponent } from './components/facebook-signin/facebook-signin.component';
 
-import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider } from "angular5-social-login";
+import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider } from "angular-6-social-login";
 import { Ng6SocialButtonModule, SocialServiceConfig } from "ng6-social-button";
 
 import { environment } from "../environments/environment";
