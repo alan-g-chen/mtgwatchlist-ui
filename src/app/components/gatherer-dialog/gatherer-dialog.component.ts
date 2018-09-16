@@ -12,9 +12,8 @@ export class GathererDialogComponent implements OnInit {
 
   public cardName: string;
   public setName: string;
-  public cardNotFound: boolean = false;
-  
-  private cardImageUri: string = null;
+  public cardNotFound: boolean = false;  
+  public cardImageUri: string = null;
   
 
   constructor(private scryService: ScryfallApiHttpClientService,
