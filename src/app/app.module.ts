@@ -1,3 +1,6 @@
+
+import { HttpModule } from '@angular/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,8 +16,12 @@ import {
   MatFormFieldModule,
   MatDividerModule,
   MatInputModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatTableModule,
+  MatDialogModule
 } from '@angular/material';
+
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 import { AppComponent } from './app.component';
 import { FacebookSigninComponent } from './components/facebook-signin/facebook-signin.component';
@@ -25,17 +32,26 @@ import { Ng6SocialButtonModule, SocialServiceConfig } from "ng6-social-button";
 import { environment } from "../environments/environment";
 import { MtgWatchlistComponent } from './components/mtg-watchlist/mtg-watchlist.component'
 
+import { WatchlistApiHttpClientService } from './services/watchlist-api-http-client/watchlist-api-http-client.service';
+import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component'
+
+import { MatProgressButtons } from 'mat-progress-buttons';
+
 export function getAuthServiceConfigs() {
   let config = new SocialServiceConfig()
-      .addFacebook(environment.facebookAppId);
+    .addFacebook(environment.facebookAppId);
   return config;
 }
 
 @NgModule({
+  entryComponents: [
+    ErrorDialogComponent
+  ],
   declarations: [
     AppComponent,
     FacebookSigninComponent,
-    MtgWatchlistComponent
+    MtgWatchlistComponent,
+    ErrorDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -51,9 +67,15 @@ export function getAuthServiceConfigs() {
     MatDividerModule,
     MatInputModule,
     MatExpansionModule,
+    MatTableModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
     FormsModule,
     SocialLoginModule,
-    Ng6SocialButtonModule
+    Ng6SocialButtonModule,
+    HttpClientModule,
+    HttpModule,
+    MatProgressButtons
   ],
   exports: [
     MatButtonModule,
@@ -66,13 +88,15 @@ export function getAuthServiceConfigs() {
     MatFormFieldModule,
     MatDividerModule,
     MatInputModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatTableModule
   ],
   providers: [
     {
       provide: SocialServiceConfig,
       useFactory: getAuthServiceConfigs
-    }
+    },
+    WatchlistApiHttpClientService
   ],
   bootstrap: [AppComponent]
 })

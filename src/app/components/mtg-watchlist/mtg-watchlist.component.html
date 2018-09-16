@@ -1,5 +1,76 @@
-<p>
-  mtg-watchlist works!
-</p>
-  <div *ngIf="isAuthenticated()"> Stuff goes here if authenticated! </div>
+<div *ngIf="isAuthenticated()">
+  <div>
+    <table mat-table [dataSource]="mtgCards" matSort class="mat-elevation-z8">
+   
+      <ng-container matColumnDef="cardName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Card Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.cardName}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="setName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Set Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.setName}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="lastPrice">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Price </th>
+        <td mat-cell *matCellDef="let element"> {{element.lastPrice | currency}} </td>
+      </ng-container>
 
+      <ng-container matColumnDef="currentPrice">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Current Price </th>
+        <td mat-cell *matCellDef="let element"> {{element.currentPrice | currency}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Button">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+        <mat-cell *matCellDef="let row" >
+             <button mat-raised-button >Edit</button> 
+        </mat-cell>
+    </ng-container>
+   
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <br>
+    
+    <progress-bar-button [options]="fetchCardsButtonOptions" (onClick)="getItemsFromApi()"></progress-bar-button>
+   
+  </div>
+  <br>
+  <mat-divider></mat-divider>
+  <br>
+  <div>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Track a new card</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field class="example-full-width">
+            <input 
+            matInput 
+            placeholder="Card Name" 
+            value=""
+            [(ngModel)]= "this.newCard.cardName">
+          </mat-form-field>
+          <mat-form-field>
+            <input 
+            matInput 
+            placeholder="Set Name" 
+            value=""
+            [(ngModel)]= "this.newCard.setName">
+          </mat-form-field>
+          <mat-form-field>
+            <input 
+            matInput 
+            placeholder="CurrentPrice" 
+            value=""
+            [(ngModel)]= "this.newCard.cardPrice">
+          </mat-form-field>
+          <span></span>
+            <progress-bar-button [options]="addCardButtonOptions" (onClick)="addNewCardToApi()"></progress-bar-button>          
+        </mat-card-content>
+      </mat-card>
+  </div>
+</div>

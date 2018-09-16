@@ -1,9 +1,13 @@
+<h1 *ngIf="isAuthenticated()">
+  Welcome, {{this.userName}}!
+</h1>
+
 <p>
-  Authenticated? {{isAuthenticated()}}
   <facebook-login-button  
     (socialUser)="getSocialUser($event)"
     *ngIf="!isAuthenticated()"></facebook-login-button>
-  <button mat-flat-button 
+  <button mat-raised-button 
     (click)="signOut()"
+    color="primary"
     *ngIf="isAuthenticated()" >Log out (doesn't work)</button>
 </p>

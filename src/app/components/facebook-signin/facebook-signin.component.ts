@@ -12,10 +12,7 @@ export class FacebookSigninComponent implements OnInit {
 
   private userToken: string;
 
-  shareObj = {
-    href: "FACEBOOK-SHARE-LINK",
-    hashtag: "#FACEBOOK-SHARE-HASGTAG"
-  };
+  public userName: string;
 
   constructor(private socialAuthService: SocialService, private  tokenManagerService : TokenManagerService) { }
 
@@ -34,6 +31,7 @@ export class FacebookSigninComponent implements OnInit {
   }
 
   public getSocialUser(socialUser) {
+    this.userName = socialUser.name;
     this.userToken = socialUser.accessToken;
     this.tokenManagerService.myAccessToken(this.userToken);
     console.log(socialUser);

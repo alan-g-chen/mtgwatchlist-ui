@@ -24,6 +24,7 @@
     "@angular/router": "^6.1.0",
     "angular5-social-login": "^1.0.9",
     "core-js": "^2.5.4",
+    "mat-progress-buttons": "^6.0.1",
     "ng6-social-button": "^1.0.5",
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.3.2",

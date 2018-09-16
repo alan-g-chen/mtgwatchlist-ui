@@ -6,7 +6,12 @@ export const environment = {
   production: false,
 
   // Facebook info
-  facebookAppId: "246535755994969"
+  facebookAppId: "246535755994969",
+
+  // API info
+  watchlistApiGetCardsUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist",
+  watchlistApiAddCardUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist/add"
+  //watchlistApiGetCardsUri: "http://localhost:63516/api/watchlist"
 };
 
 /*
