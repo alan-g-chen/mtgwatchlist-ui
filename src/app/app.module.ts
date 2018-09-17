@@ -18,10 +18,9 @@ import {
   MatInputModule,
   MatExpansionModule,
   MatTableModule,
-  MatDialogModule
+  MatDialogModule,
+  MatSelectModule
 } from '@angular/material';
-
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
@@ -76,14 +75,14 @@ export function getAuthServiceConfigs() {
     MatExpansionModule,
     MatTableModule,
     MatDialogModule,
+    MatSelectModule,
     MatProgressSpinnerModule,
     FormsModule,
     SocialLoginModule,
     Ng6SocialButtonModule,
     HttpClientModule,
     HttpModule,
-    MatProgressButtons,
-    NgbTooltipModule
+    MatProgressButtons
   ],
   exports: [
     MatButtonModule,

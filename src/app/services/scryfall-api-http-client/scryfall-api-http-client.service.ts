@@ -15,10 +15,30 @@ export class ScryfallApiHttpClientService {
     const headers = new HttpHeaders({
       Accept: 'application/json'
     });
-
     const params = new HttpParams();
-
     return this.httpClient.get<any>(environment.scryfallApiFuzzyFetchUrl + cardName, {
+      headers,
+      params
+    });
+  }
+
+  public GetAllPrintingsOfCard(cardName: string): Observable<HttpResponse<any>> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json'
+    });
+    const params = new HttpParams();
+    return this.httpClient.get<any>(environment.scryfallApiSearchUrl + cardName + "&unique=prints", {
+      headers,
+      params
+    });
+  }
+
+  public GetMultiverseId(multiverseId: number): Observable<HttpResponse<any>> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json'
+    });
+    const params = new HttpParams();
+    return this.httpClient.get<any>(environment.scryfallApiMultiverseUrl + multiverseId, {
       headers,
       params
     });

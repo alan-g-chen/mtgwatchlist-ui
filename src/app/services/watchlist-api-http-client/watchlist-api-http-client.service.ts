@@ -25,7 +25,7 @@ export class WatchlistApiHttpClientService {
     });
   }
 
-  public AddNewCardToWatchList(accessToken: string, cardName: string, setName: string, currentPrice: number): Observable<HttpResponse<any>> {
+  public RemoveCardsFromWatchlist(accessToken: string, multiverseIds: number[]): Observable<HttpResponse<any>> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -33,14 +33,35 @@ export class WatchlistApiHttpClientService {
     });
 
     const params = new HttpParams();
+    var bodyObject = [];
+    multiverseIds.forEach(element => {
+      bodyObject.push({MultiverseId: element});
+    });
+    
+    var body = JSON.stringify(bodyObject);
 
-    var body = JSON.stringify({
+    return this.httpClient.post<any>(environment.watchlistApiRemoveCardsUri, body, {
+      headers,
+      params
+    });
+  }
+
+  public AddNewCardToWatchList(accessToken: string, cardName: string, setName: string, multiverseId: number, currentPrice: number): Observable<HttpResponse<any>> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'facebook-access-token': accessToken
+    });
+
+    const params = new HttpParams();
+    var body = JSON.stringify([{
       CardName: cardName,
       SetName: setName,
+      MultiverseId: multiverseId,
       CurrentPrice: currentPrice
-    })
+    }]);
 
-    return this.httpClient.post<any>(environment.watchlistApiAddCardUri, body, {
+    return this.httpClient.post<any>(environment.watchlistApiUpdateCardsUri, body, {
       headers,
       params
     });

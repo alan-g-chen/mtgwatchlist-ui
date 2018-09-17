@@ -23,7 +23,7 @@ export class FacebookSigninComponent implements OnInit {
   public signOut() {
     if (this.socialAuthService.isSocialLoggedIn()) {
       this.socialAuthService.signOut().catch((err) => {
-        console.log(err);
+        console.error(err);
       });
       this.userToken = null;
       this.tokenManagerService.myAccessToken(this.userToken);
@@ -34,7 +34,6 @@ export class FacebookSigninComponent implements OnInit {
     this.userName = socialUser.name;
     this.userToken = socialUser.accessToken;
     this.tokenManagerService.myAccessToken(this.userToken);
-    console.log(socialUser);
   }
 
   public isAuthenticated(): boolean {
