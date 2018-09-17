@@ -22,7 +22,8 @@ import {
   MatSelectModule,
   MatProgressBarModule,
   MatTooltipModule,
-  MatSidenavModule
+  MatSidenavModule,
+  MatAutocompleteModule
 } from '@angular/material';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
@@ -84,27 +85,16 @@ export function getAuthServiceConfigs() {
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatSidenavModule,
+    MatAutocompleteModule,
     FormsModule,
     SocialLoginModule,
     Ng6SocialButtonModule,
     HttpClientModule,
     HttpModule,
-    MatProgressButtons
+    MatProgressButtons,
+    ReactiveFormsModule
   ],
-  exports: [
-    MatButtonModule,
-    MatCheckboxModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCardModule,
-    MatListModule,
-    MatFormFieldModule,
-    MatDividerModule,
-    MatInputModule,
-    MatExpansionModule,
-    MatTableModule
-  ],
+  exports: [ ],
   providers: [
     {
       provide: SocialServiceConfig,

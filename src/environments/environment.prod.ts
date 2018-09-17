@@ -6,5 +6,6 @@ export const environment = {
   watchlistApiRemoveCardsUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist/remove",
   scryfallApiFuzzyFetchUrl: "https://api.scryfall.com/cards/named?fuzzy=",
   scryfallApiSearchUrl: "https://api.scryfall.com/cards/search?q=",
-  scryfallApiMultiverseUrl: "https://api.scryfall.com/cards/multiverse/"
+  scryfallApiMultiverseUrl: "https://api.scryfall.com/cards/multiverse/",
+  scryfallApiAutocompleteUrl: "https://api.scryfall.com/cards/autocomplete?q="  
 };

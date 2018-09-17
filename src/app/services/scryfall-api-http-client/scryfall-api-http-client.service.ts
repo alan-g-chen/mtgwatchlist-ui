@@ -11,6 +11,17 @@ export class ScryfallApiHttpClientService {
 
   constructor(private httpClient: HttpClient) { }
 
+  public GetAutoCompleteSuggestions(cardHint: string): Observable<HttpResponse<any>> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json'
+    });
+    const params = new HttpParams();
+    return this.httpClient.get<any>(environment.scryfallApiAutocompleteUrl + cardHint, {
+      headers,
+      params
+    });
+  }
+
   public GetFuzzyCard(cardName: string): Observable<HttpResponse<any>> {
     const headers = new HttpHeaders({
       Accept: 'application/json'

@@ -1,4 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
+import { FormControl } from '@angular/forms';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TokenManagerService } from "../../services/token-manager/token-manager.service"
 import { MtgCardListing } from "../../mtg-card-listing"
@@ -29,8 +30,8 @@ const LOADING_CARD: MtgCardListing = {
 })
 export class MtgWatchlistComponent implements OnInit {
 
+  stateCtrl = new FormControl();
   private accessToken: string;
-
   public cardOptions: MtgCardListing[] = [];
   public fetchCardsButtonOptions: ButtonOpts = {
     active: false,
@@ -79,6 +80,7 @@ export class MtgWatchlistComponent implements OnInit {
   public priceLoading: boolean = false;
   public currentlyLoadedCardName: string;
   public isDevelopment: boolean = !environment.production;
+  public possibleCardNames: string[] = [];
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -129,6 +131,25 @@ export class MtgWatchlistComponent implements OnInit {
     }
   }
 
+  public typingCardName(cardHint: string): void {
+    this.newCard = this.emptyCard;
+    if (null != cardHint && cardHint.length >= 3) {
+      this.scryService
+        .GetAutoCompleteSuggestions(cardHint)
+        .subscribe(
+          response => {
+            var responseObject = JSON.parse(JSON.stringify(response));
+            this.possibleCardNames = responseObject.data;
+          },
+          (error: HttpResponse<any>) => {
+            console.error(error);
+          });
+    }
+    else {
+      this.possibleCardNames = [];
+    }
+  }
+
   public updateAllCardPricesFromApi(): void {
     // set the button to loading
     this.updateCardPricesButtonOptions.active = true;
@@ -137,7 +158,7 @@ export class MtgWatchlistComponent implements OnInit {
     var updatedMtgCardArray: MtgCardListing[] = this.loadedWatchlistDataSource.data;
 
     // trigger loading animation for the cards;
-    updatedMtgCardArray.map(function (element) { 
+    updatedMtgCardArray.map(function (element) {
       element.isUpdating = true;
       return element;
     });
