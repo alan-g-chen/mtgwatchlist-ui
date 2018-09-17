@@ -2,30 +2,24 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TokenManagerService } from "../../services/token-manager/token-manager.service"
 import { MtgCardListing } from "../../mtg-card-listing"
-import { MatTableDataSource, MatSort, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialog, MatProgressBar } from '@angular/material';
 import { WatchlistApiHttpClientService } from '../../services/watchlist-api-http-client/watchlist-api-http-client.service'
 import { ScryfallApiHttpClientService } from '../../services/scryfall-api-http-client/scryfall-api-http-client.service'
 
 import { ButtonOpts } from 'mat-progress-buttons'
 import { GathererDialogComponent } from '../gatherer-dialog/gatherer-dialog.component';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
-const LOADING_CARD: CardInformation = {
+const LOADING_CARD: MtgCardListing = {
   cardName: "Loading cards...",
   setName: "Loading sets...",
-  cardPrice: null,
+  currentPrice: null,
+  startingPrice: null,
+  lastSeenPrice: null,
   multiverseId: null,
   isFoil: false,
-  canBeFoil: false
-}
-
-export interface CardInformation {
-  cardName: string;
-  setName: string;
-  cardPrice: number;
-  multiverseId: number;
-  isFoil: boolean;
-  canBeFoil: boolean;
+  canBeFoil: false,
+  isUpdating: false
 }
 
 @Component({
@@ -37,10 +31,20 @@ export class MtgWatchlistComponent implements OnInit {
 
   private accessToken: string;
 
-  public cardOptions: CardInformation[] = [];
+  public cardOptions: MtgCardListing[] = [];
   public fetchCardsButtonOptions: ButtonOpts = {
     active: false,
     text: 'Fetch my watch list!',
+    buttonColor: 'primary',
+    barColor: 'accent',
+    raised: true,
+    mode: 'indeterminate',
+    value: 0,
+    disabled: false
+  }
+  public updateCardPricesButtonOptions: ButtonOpts = {
+    active: false,
+    text: 'Update card prices!',
     buttonColor: 'primary',
     barColor: 'accent',
     raised: true,
@@ -58,17 +62,20 @@ export class MtgWatchlistComponent implements OnInit {
     value: 0,
     disabled: false
   }
-  public emptyCard: CardInformation = {
+  public emptyCard: MtgCardListing = {
     cardName: "",
     setName: "",
-    cardPrice: null,
+    currentPrice: null,
+    lastSeenPrice: null,
+    startingPrice: null,
     multiverseId: null,
     isFoil: false,
-    canBeFoil: false
+    canBeFoil: false,
+    isUpdating: false
   }
   public loadedWatchlistDataSource = new MatTableDataSource([]);
-  public displayedColumns: string[] = ['cardName', 'setName', 'startingPrice', 'lastPrice', 'currentPrice', 'Button'];
-  public newCard: CardInformation = this.emptyCard;
+  public displayedColumns: string[] = ['cardName', 'setName', 'startingPrice', 'lastPrice', 'currentPrice', 'isUpdating', 'actions'];
+  public newCard: MtgCardListing = this.emptyCard;
   public priceLoading: boolean = false;
   public currentlyLoadedCardName: string;
   public isDevelopment: boolean = !environment.production;
@@ -95,10 +102,9 @@ export class MtgWatchlistComponent implements OnInit {
   }
 
   public openViewCardDialog(multiverseId: number): void {
-    let isMobile = /Android|iPhone/i.test(window.navigator.userAgent)
     const dialogRef = this.dialog.open(GathererDialogComponent, {
       width: 'flex',
-      data: { multiverseId: multiverseId, isMobile: isMobile }
+      data: { multiverseId: multiverseId }
     });
 
     dialogRef.afterClosed().subscribe(result => { });
@@ -107,13 +113,13 @@ export class MtgWatchlistComponent implements OnInit {
   public updateNewCardPriceFromApi(): void {
     if (null != this.newCard && null != this.newCard.multiverseId) {
       this.priceLoading = true;
-      this.newCard.cardPrice = null;
+      this.newCard.currentPrice = null;
       this.scryService
         .GetMultiverseId(this.newCard.multiverseId)
         .subscribe(
           response => {
             var responseObject = JSON.parse(JSON.stringify(response));
-            this.newCard.cardPrice = responseObject.usd;
+            this.newCard.currentPrice = responseObject.usd;
             this.priceLoading = false;
           },
           (error: HttpResponse<any>) => {
@@ -121,6 +127,51 @@ export class MtgWatchlistComponent implements OnInit {
             this.priceLoading = false;
           });
     }
+  }
+
+  public updateAllCardPricesFromApi(): void {
+    // set the button to loading
+    this.updateCardPricesButtonOptions.active = true;
+
+    // get current card list
+    var updatedMtgCardArray: MtgCardListing[] = this.loadedWatchlistDataSource.data;
+
+    // trigger loading animation for the cards;
+    updatedMtgCardArray.map(function (element) { 
+      element.isUpdating = true;
+      return element;
+    });
+
+    // update prices
+    updatedMtgCardArray.map(function (element) {
+      element.isUpdating = false;
+      this.scryService.GetMultiverseId(element.multiverseId)
+        .subscribe(
+          response => {
+            var responseObject = JSON.parse(JSON.stringify(response));
+            this.newCard.cardPrice = responseObject.usd;
+            element.lastSeenPrice = element.currentPrice;
+            element.currentPrice = responseObject.usd;
+            return element;
+          },
+          (error: HttpResponse<any>) => {
+            console.error("Updating" + element.multiverseId + ":" + error);
+            return element;
+          });
+    }, this);
+
+    // Update our API
+    this.watchlistApiService.AddOrUpdateCardsToWatchList(this.accessToken, updatedMtgCardArray)
+      .subscribe(
+        response => {
+          //don't need to do anything
+        },
+        (error: HttpResponse<any>) => {
+          console.log(error);
+        });
+    // update dataview
+    this.loadedWatchlistDataSource.data = updatedMtgCardArray;
+    this.updateCardPricesButtonOptions.active = false;
   }
 
   public fetchCardSetsFromApi(): void {
@@ -141,13 +192,16 @@ export class MtgWatchlistComponent implements OnInit {
             var resultingObject = JSON.parse(JSON.stringify(res)).data;
             resultingObject.forEach(element => {
               if (element.multiverse_ids.length >= 1) { // TODO: We're only going to fetch cards with multiverse IDs.
-                var newCard: CardInformation = {
+                var newCard: MtgCardListing = {
                   cardName: element.name,
                   setName: element.set_name,
-                  cardPrice: 0,
+                  currentPrice: 0,
+                  lastSeenPrice: 0,
+                  startingPrice: 0,
                   multiverseId: element.multiverse_ids[0],
                   canBeFoil: element.foil, // TODO: there are some cards that can only be foil. Let's figure out how to address those.
-                  isFoil: !(element.nonfoil) // For now, we'll just default to foil if the nonfoil is not available.
+                  isFoil: !(element.nonfoil), // For now, we'll just default to foil if the nonfoil is not available.
+                  isUpdating: false
                 }
                 this.cardOptions.push(newCard);
                 this.currentlyLoadedCardName = newCard.cardName;
@@ -188,7 +242,7 @@ export class MtgWatchlistComponent implements OnInit {
 
   public addNewCardToWatchlistApi(): void {
 
-    if (this.newCard.multiverseId == null || this.newCard.cardName == null || this.newCard.cardPrice == null || this.newCard.setName == null) {
+    if (this.newCard.multiverseId == null || this.newCard.cardName == null || this.newCard.currentPrice == null || this.newCard.setName == null) {
       console.error("Null values detected.");
       this.addCardButtonOptions.buttonColor = 'warn';
     }
@@ -196,23 +250,15 @@ export class MtgWatchlistComponent implements OnInit {
       this.addCardButtonOptions.active = true;
       this.addCardButtonOptions.buttonColor = 'primary';
       this.watchlistApiService
-        .AddNewCardToWatchList(this.accessToken, this.newCard.cardName, this.newCard.setName, this.newCard.multiverseId, this.newCard.cardPrice)
+        .AddOrUpdateCardsToWatchList(this.accessToken, [this.newCard])
         .subscribe(
           res => {
             this.addCardButtonOptions.active = false;
 
-            var pushedCard: MtgCardListing = new MtgCardListing();
-            pushedCard.cardName = this.newCard.cardName;
-            pushedCard.setName = this.newCard.setName;
-            pushedCard.multiverseId = this.newCard.multiverseId;
-            pushedCard.startingPrice = this.newCard.cardPrice;
-            pushedCard.lastSeenPrice = this.newCard.cardPrice;
-            pushedCard.currentPrice = this.newCard.cardPrice;
-
-            this.removeMultiverseIdFromDataTableIfExists(pushedCard.multiverseId);
+            this.removeMultiverseIdFromDataTableIfExists(this.newCard.multiverseId);
 
             var tempArray = this.loadedWatchlistDataSource.data;
-            tempArray.push(pushedCard);
+            tempArray.push(this.newCard);
             this.loadedWatchlistDataSource.data = tempArray;
 
             this.newCard = this.emptyCard;
@@ -232,7 +278,7 @@ export class MtgWatchlistComponent implements OnInit {
   public removeCardFromWatchlistApi(multiverseId: number): void {
     if (multiverseId == null || multiverseId <= 0) {
       // Something went wrong - this shouldn't have happened.
-      console.error("A null or invalid objetc was passed to the remove functionm MultiverseId passed:" + multiverseId);
+      console.error("A null or invalid object was passed to the remove function. MultiverseId passed:" + multiverseId);
       return;
     }
 

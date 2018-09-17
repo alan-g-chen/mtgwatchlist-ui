@@ -14,12 +14,11 @@ export class FacebookSigninComponent implements OnInit {
 
   public userName: string;
 
-  constructor(private socialAuthService: SocialService, private  tokenManagerService : TokenManagerService) { }
+  constructor(private socialAuthService: SocialService, private tokenManagerService: TokenManagerService) { }
 
   ngOnInit() {
     this.userToken = null;
   }
-
   public signOut() {
     if (this.socialAuthService.isSocialLoggedIn()) {
       this.socialAuthService.signOut().catch((err) => {

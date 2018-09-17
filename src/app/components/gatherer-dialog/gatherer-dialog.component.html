@@ -5,5 +5,5 @@
     A card by this name was not found.
 </div>
 <div *ngIf="imageAvailable()">
-  <img [src]="this.cardImageUri">
+    <img matTooltip="Double click for a larger image!" [src]="this.cardImageUri" (dblclick)="fetchLargerCardImage()">
 </div>

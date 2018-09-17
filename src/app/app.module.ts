@@ -19,7 +19,10 @@ import {
   MatExpansionModule,
   MatTableModule,
   MatDialogModule,
-  MatSelectModule
+  MatSelectModule,
+  MatProgressBarModule,
+  MatTooltipModule,
+  MatSidenavModule
 } from '@angular/material';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
@@ -64,8 +67,10 @@ export function getAuthServiceConfigs() {
     BrowserModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatIconModule,
     MatMenuModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatIconModule,
     MatCardModule,
     MatListModule,
@@ -77,6 +82,8 @@ export function getAuthServiceConfigs() {
     MatDialogModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatSidenavModule,
     FormsModule,
     SocialLoginModule,
     Ng6SocialButtonModule,

@@ -5,4 +5,7 @@ export class MtgCardListing {
     public startingPrice: number;
     public lastSeenPrice: number;
     public currentPrice: number;
+    public isFoil: boolean;
+    public canBeFoil: boolean;
+    public isUpdating: boolean;
 }

@@ -1,13 +1,16 @@
-<h1 *ngIf="isAuthenticated()">
-  Welcome, {{this.userName}}!
-</h1>
+<div class="header">
+  MTGWatchlist
+  <div class="header-right">
+    <facebook-login-button (socialUser)="getSocialUser($event)" *ngIf="!isAuthenticated()"></facebook-login-button>
+    <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isAuthenticated()">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="signOut()" color="primary">
+        <mat-icon>arrow_right_alt</mat-icon>
+        Log out (signed in as {{userName}})
+      </button>
+    </mat-menu>
 
-<p>
-  <facebook-login-button  
-    (socialUser)="getSocialUser($event)"
-    *ngIf="!isAuthenticated()"></facebook-login-button>
-  <button mat-raised-button 
-    (click)="signOut()"
-    color="primary"
-    *ngIf="isAuthenticated()" >Log out (doesn't work)</button>
-</p>
+  </div>
+</div>

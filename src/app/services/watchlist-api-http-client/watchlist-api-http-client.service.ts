@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/comm
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { MtgCardListing } from '../../mtg-card-listing';
 
 @Injectable({
   providedIn: 'root'
@@ -35,9 +36,9 @@ export class WatchlistApiHttpClientService {
     const params = new HttpParams();
     var bodyObject = [];
     multiverseIds.forEach(element => {
-      bodyObject.push({MultiverseId: element});
+      bodyObject.push({ MultiverseId: element });
     });
-    
+
     var body = JSON.stringify(bodyObject);
 
     return this.httpClient.post<any>(environment.watchlistApiRemoveCardsUri, body, {
@@ -46,7 +47,7 @@ export class WatchlistApiHttpClientService {
     });
   }
 
-  public AddNewCardToWatchList(accessToken: string, cardName: string, setName: string, multiverseId: number, currentPrice: number): Observable<HttpResponse<any>> {
+  public AddOrUpdateCardsToWatchList(accessToken: string, cards: MtgCardListing[]): Observable<HttpResponse<any>> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -54,12 +55,7 @@ export class WatchlistApiHttpClientService {
     });
 
     const params = new HttpParams();
-    var body = JSON.stringify([{
-      CardName: cardName,
-      SetName: setName,
-      MultiverseId: multiverseId,
-      CurrentPrice: currentPrice
-    }]);
+    var body = JSON.stringify(cards);
 
     return this.httpClient.post<any>(environment.watchlistApiUpdateCardsUri, body, {
       headers,
