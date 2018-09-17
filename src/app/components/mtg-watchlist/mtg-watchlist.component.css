@@ -1,7 +1,19 @@
 table {
     width: 100%;
-  }
-  
+  }  
+
   th.mat-sort-header-sorted {
     color: black;
   }
+
+  .add-card-header-image {
+    background-image: url('https://d1u5p3l4wpay3k.cloudfront.net/mtgsalvation_gamepedia/b/be/T.svg?version=ae7f99c29059c5efa3ecb02ed59843d5');
+    background-size: cover;
+  }
+
+  .card-list-header-image {
+    background-image: url('https://apprecs.org/gp/images/app-icons/300/11/monsieurlemarquis.magicthegathering.gamemanager.jpg');
+    background-size: cover;
+  }
+
+  

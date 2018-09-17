@@ -133,6 +133,7 @@ export class MtgWatchlistComponent implements OnInit {
 
   public typingCardName(cardHint: string): void {
     this.newCard = this.emptyCard;
+    this.cardOptions = [];
     if (null != cardHint && cardHint.length >= 3) {
       this.scryService
         .GetAutoCompleteSuggestions(cardHint)
@@ -230,9 +231,14 @@ export class MtgWatchlistComponent implements OnInit {
             });
           },
           (error: HttpResponse<any>) => {
-            this.cardOptions = [];
+            if (error.status == 404) {     
+                this.newCard.setName = "No sets found!"
+                this.cardOptions = [ this.newCard ];
+            }
+            else {
+              this.cardOptions = [];              
+            }            
             this.currentlyLoadedCardName = this.newCard.cardName;
-            console.error(error);
           });
     }
   }
@@ -315,7 +321,6 @@ export class MtgWatchlistComponent implements OnInit {
 
   private removeMultiverseIdFromDataTableIfExists(multiverseId: number): void {
     var indexOfExistingCard = this.loadedWatchlistDataSource.data.findIndex(x => x.multiverseId == multiverseId);
-    console.log(indexOfExistingCard);
     if (indexOfExistingCard >= 0) {
       var tempArray = this.loadedWatchlistDataSource.data;
       tempArray.splice(indexOfExistingCard, 1);
