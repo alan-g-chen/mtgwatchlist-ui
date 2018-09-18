@@ -7,7 +7,7 @@
     <br>
     <mat-card-content>
       <mat-form-field>
-        <input matInput required placeholder="Card Name" aria-label="Card Name" [matAutocomplete]="auto" [formControl]="stateCtrl"
+        <input matInput required placeholder="Card Name" aria-label="Card Name" [matAutocomplete]="auto"
           [(ngModel)]="newCard.cardName" (keyup)="typingCardName($event.target.value)">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let possibleCardName of possibleCardNames" [value]="possibleCardName">{{possibleCardName}}</mat-option>
@@ -20,7 +20,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field>
-        <input matInput placeholder="Current Price" value="" ng-disabled="!this.priceLoading" [(ngModel)]="this.newCard.currentPrice">
+        <input matInput placeholder={{pricePlaceholderValue}} value="" [(ngModel)]="this.newCard.currentPrice">
       </mat-form-field>
       &nbsp;&nbsp;&nbsp;&nbsp;
       <progress-bar-button [options]="addCardButtonOptions" (click)="addNewCardToWatchlistApi()"></progress-bar-button>
