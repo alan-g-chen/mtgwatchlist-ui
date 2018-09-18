@@ -61,7 +61,7 @@ export class MtgWatchlistComponent implements OnInit {
     raised: true,
     mode: 'indeterminate',
     value: 0,
-    disabled: false
+    disabled: true
   }
   public emptyCard: MtgCardListing = {
     cardName: "",
@@ -124,6 +124,11 @@ export class MtgWatchlistComponent implements OnInit {
             if (responseObject.usd != null && responseObject.usd != undefined) {
               this.newCard.currentPrice = responseObject.usd;
               this.pricePlaceholderValue = "Current Price";
+              this.addCardButtonOptions.disabled = false;
+              if (this.loadedWatchlistDataSource.data.findIndex( x=> x.multiverseId == this.newCard.multiverseId) >= 0) {
+                // card already exists, so update the button text
+                this.addCardButtonOptions.text = "Update my watchlist!";
+              }
             }
             else {
               this.pricePlaceholderValue = "Price was not found!.";
@@ -136,10 +141,12 @@ export class MtgWatchlistComponent implements OnInit {
     }
   }
 
+
+
   public typingCardName(cardHint: string): void {
-    this.newCard = this.emptyCard;
-    this.cardOptions = [];
-    this.pricePlaceholderValue = "Current Price";
+    // Reinitialize everything
+    this.reinitializeComponentValues();
+
     if (null != cardHint && cardHint.length >= 3) {
       this.scryService
         .GetAutoCompleteSuggestions(cardHint)
@@ -296,19 +303,18 @@ export class MtgWatchlistComponent implements OnInit {
         .subscribe(
           res => {
             this.addCardButtonOptions.active = false;
-
             this.removeMultiverseIdFromDataTableIfExists(this.newCard.multiverseId);
-
             var tempArray = this.loadedWatchlistDataSource.data;
             tempArray.push(this.newCard);
             this.loadedWatchlistDataSource.data = tempArray;
-
-            this.newCard = this.emptyCard;
+            this.reinitializeComponentValues();
+            this.addCardButtonOptions.text = "Watchlist updated!"
           },
           (error: HttpResponse<any>) => {
             console.error(error);
             this.addCardButtonOptions.buttonColor = 'warn';
             this.addCardButtonOptions.active = false;
+            this.addCardButtonOptions.text="Retry";
             // this.dialog.open(ErrorDialogComponent, {
             //   width: '250px',
             //   data: { error: error }
@@ -341,6 +347,16 @@ export class MtgWatchlistComponent implements OnInit {
       tempArray.splice(indexOfExistingCard, 1);
       this.loadedWatchlistDataSource.data = tempArray;
     }
+  }
+
+  private reinitializeComponentValues(): void {
+    this.addCardButtonOptions.disabled = true;
+    this.addCardButtonOptions.buttonColor = 'primary';
+    this.addCardButtonOptions.text = 'Add to my watch list!';
+    this.newCard = this.emptyCard;
+    this.cardOptions = [];
+    this.currentlyLoadedCardName = "";
+    this.pricePlaceholderValue = "Current Price";
   }
 
   applyTableFilter(filterValue: string) {
