@@ -4,9 +4,6 @@
 mat-icon{
     font-family: 'Material Icons' !important;
     }
-.mat-raised-button:not([class*=mat-elevation-z]) {
+.mat-raised-button.mat-primary {
   background:#000000;!important;
-border-radius:5px;!important;
-width:200px;!important;
-height:80px;!important;
 }
