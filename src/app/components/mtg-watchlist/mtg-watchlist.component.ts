@@ -30,8 +30,8 @@ const LOADING_CARD: MtgCardListing = {
 })
 export class MtgWatchlistComponent implements OnInit {
 
-  stateCtrl = new FormControl();
   private accessToken: string;
+  public pricePlaceholderValue: string = "Current Price";
   public cardOptions: MtgCardListing[] = [];
   public fetchCardsButtonOptions: ButtonOpts = {
     active: false,
@@ -77,7 +77,6 @@ export class MtgWatchlistComponent implements OnInit {
   public loadedWatchlistDataSource = new MatTableDataSource([]);
   public displayedColumns: string[] = ['cardName', 'setName', 'startingPrice', 'lastPrice', 'currentPrice', 'isUpdating', 'actions'];
   public newCard: MtgCardListing = this.emptyCard;
-  public priceLoading: boolean = false;
   public currentlyLoadedCardName: string;
   public isDevelopment: boolean = !environment.production;
   public possibleCardNames: string[] = [];
@@ -114,19 +113,25 @@ export class MtgWatchlistComponent implements OnInit {
 
   public updateNewCardPriceFromApi(): void {
     if (null != this.newCard && null != this.newCard.multiverseId) {
-      this.priceLoading = true;
+      this.pricePlaceholderValue = "Loading price..."
       this.newCard.currentPrice = null;
       this.scryService
         .GetMultiverseId(this.newCard.multiverseId)
         .subscribe(
           response => {
+            console.log(response)
             var responseObject = JSON.parse(JSON.stringify(response));
-            this.newCard.currentPrice = responseObject.usd;
-            this.priceLoading = false;
+            if (responseObject.usd != null && responseObject.usd != undefined) {
+              this.newCard.currentPrice = responseObject.usd;
+              this.pricePlaceholderValue = "Current Price";
+            }
+            else {
+              this.pricePlaceholderValue = "Price was not found!.";
+            }
           },
           (error: HttpResponse<any>) => {
             console.error(error);
-            this.priceLoading = false;
+            this.pricePlaceholderValue = "Price lookup failed!";
           });
     }
   }
@@ -134,6 +139,7 @@ export class MtgWatchlistComponent implements OnInit {
   public typingCardName(cardHint: string): void {
     this.newCard = this.emptyCard;
     this.cardOptions = [];
+    this.pricePlaceholderValue = "Current Price";
     if (null != cardHint && cardHint.length >= 3) {
       this.scryService
         .GetAutoCompleteSuggestions(cardHint)
@@ -197,19 +203,27 @@ export class MtgWatchlistComponent implements OnInit {
   }
 
   public fetchCardSetsFromApi(): void {
-    if (this.currentlyLoadedCardName == this.newCard.cardName) {
-      // I'm already loaded from last time. Don't change anything.
-      return;
+    console.debug("Entering fetchCardSetsFromApi()");
+    if (this.currentlyLoadedCardName != "" && this.currentlyLoadedCardName == this.newCard.cardName) {
+      // I'm already loaded from last time, and I'm not a new thing. Don't change anything.
+      console.debug("The card named " + this.currentlyLoadedCardName + " was already loaded, so not fetching sets.");
     }
-    this.cardOptions = []; // clear the cards options.
-    if (null != this.newCard.cardName && "" != this.newCard.cardName) {
+    else if (null == this.newCard.cardName || this.newCard.cardName == "") {
+      // The card name is null or empty, so don't bother fetching.
+      console.debug("There's no current card name, so not fetching sets.");
+      this.cardOptions = []; // clear the card options.      
+    }
+    else {
+      console.debug("Loading sets for card named " + this.newCard.cardName);
       this.cardOptions = [LOADING_CARD]; // show a loading card.
       var tempCardName = this.newCard.cardName;
       if (!tempCardName.includes(' ')) { tempCardName = "!" + tempCardName } // Appending an ! here for exact text search if it's a single word.
+      console.debug("Calling api for value: " + tempCardName);
       this.scryService
         .GetAllPrintingsOfCard(tempCardName)
         .subscribe(
           res => {
+            console.debug("Got result!");
             this.cardOptions = [];
             var resultingObject = JSON.parse(JSON.stringify(res)).data;
             resultingObject.forEach(element => {
@@ -231,15 +245,16 @@ export class MtgWatchlistComponent implements OnInit {
             });
           },
           (error: HttpResponse<any>) => {
-            if (error.status == 404) {     
-                this.newCard.setName = "No sets found!"
-                this.cardOptions = [ this.newCard ];
+            if (error.status == 404) {
+              this.newCard.setName = "No sets found!"
+              this.cardOptions = [this.newCard];
             }
             else {
-              this.cardOptions = [];              
-            }            
+              console.error(error);
+              this.cardOptions = [];
+            }
             this.currentlyLoadedCardName = this.newCard.cardName;
-          });
+          });          
     }
   }
 

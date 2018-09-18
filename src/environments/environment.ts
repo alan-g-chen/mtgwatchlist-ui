@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: true,
+  production: false,
   facebookAppId: "246535755994969",
   watchlistApiGetCardsUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist",
   watchlistApiUpdateCardsUri: "https://mtgwatchlist-api.azurewebsites.net/api/watchlist/update",
