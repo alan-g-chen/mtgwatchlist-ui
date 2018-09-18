@@ -2,7 +2,7 @@
   <mat-card class="mat-elevation-z5">
     <mat-card-header>
       <div mat-card-avatar class="add-card-header-image"></div>
-      <mat-card-title style="font-weight: bold;">Track a new card:</mat-card-title>
+      <mat-card-title class="label-text">Track a new card:</mat-card-title>
     </mat-card-header>
     <br>
     <mat-card-content>
@@ -38,7 +38,7 @@
   <mat-card class="mat-elevation-z5">
     <mat-card-header>
         <div mat-card-avatar class="card-list-header-image"></div>
-      <mat-card-title style="font-weight: bold;">My tracked cards:</mat-card-title>
+      <mat-card-title class="label-text">My watchlist:</mat-card-title>
     </mat-card-header>
     <br>
     <mat-card-content>
@@ -117,3 +117,5 @@
     cardOptions: {{cardOptions | json}}
   </pre>
   </div>
+
+  {{ addCardButtonOptions | json }}

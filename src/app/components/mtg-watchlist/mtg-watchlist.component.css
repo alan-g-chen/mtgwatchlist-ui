@@ -1,3 +1,7 @@
+* {
+  font-family: 'Proxima Nova', sans-serif;
+}
+
 table {
     width: 100%;
   }  
@@ -16,4 +20,7 @@ table {
     background-size: cover;
   }
 
-  
+  .label-text {
+    font-weight: bold;
+    font-size: 120%
+  }
