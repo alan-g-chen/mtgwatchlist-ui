@@ -1,108 +1,114 @@
 <div *ngIf="isAuthenticated()">
-  <mat-card class="mat-elevation-z5">
-    <mat-card-header>
-      <div mat-card-avatar class="add-card-header-image"></div>
-      <mat-card-title class="label-text">Track a new card:</mat-card-title>
-    </mat-card-header>
-    <br>
-    <mat-card-content>
-      <mat-form-field>
-        <input matInput required placeholder="Card Name" aria-label="Card Name" [matAutocomplete]="auto" [(ngModel)]="newCard.cardName"
-          (keyup)="typingCardName($event.target.value)">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let possibleCardName of possibleCardNames" [value]="possibleCardName">{{possibleCardName}}</mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      &nbsp;
-      <mat-form-field (click)="fetchCardSetsFromApi()">
-        <mat-select required placeholder="Set Name" (selectionChange)="updateNewCardPriceFromApi()" [(value)]="newCard">
-          <mat-option *ngIf="cardOptions.length == 0" [value]="emptyCard">No set selected</mat-option>
-          <mat-option *ngFor='let card of cardOptions' [value]='card'>{{card.setName}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      &nbsp;
-      <mat-form-field>
-        <input matInput placeholder={{pricePlaceholderValue}} value="" [(ngModel)]="this.newCard.currentPrice">
-      </mat-form-field>
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <progress-bar-button [options]="addCardButtonOptions" (click)="addNewCardToWatchlistApi()"></progress-bar-button>
-      <button mat-button type="button" class="btn btn-outline-secondary" (click)="openViewCardDialog(newCard.multiverseId)"
-        *ngIf="newCard.multiverseId != null && newCard.multiverseId > 0">View card!</button>
-    </mat-card-content>
-  </mat-card>
+  <div class="flex-grid">
+    <div class="add-card-column">
+      <mat-card class="mat-elevation-z5">
+        <mat-card-header>
+          <div mat-card-avatar class="add-card-header-image"></div>
+          <mat-card-title class="label-text">Add Card</mat-card-title>
+        </mat-card-header>
+        <br>
+        <mat-card-content>
+          <mat-form-field>
+            <input matInput required placeholder="Card Name" aria-label="Card Name" [matAutocomplete]="auto" [(ngModel)]="newCard.cardName"
+              (keyup)="typingCardName($event.target.value)">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let possibleCardName of possibleCardNames" [value]="possibleCardName">{{possibleCardName}}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <br>
+          <mat-form-field (click)="fetchCardSetsFromApi()">
+            <mat-select required placeholder="Set Name" (selectionChange)="updateNewCardPriceFromApi()" [(value)]="newCard">
+              <mat-option *ngIf="cardOptions.length == 0" [value]="emptyCard">No set selected</mat-option>
+              <mat-option *ngFor='let card of cardOptions' [value]='card'>{{card.setName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <input matInput placeholder={{pricePlaceholderValue}} value="" [(ngModel)]="this.newCard.currentPrice">
+          </mat-form-field>
+          <br>
+          <br>          
+          <progress-bar-button [options]="addCardButtonOptions" (click)="addNewCardToWatchlistApi()"></progress-bar-button>
+          <button mat-button type="button" class="btn btn-outline-secondary" (click)="openViewCardDialog(newCard.multiverseId)" *ngIf="newCard.multiverseId != null && newCard.multiverseId > 0">View card!</button>
+        </mat-card-content>
+      </mat-card>
+      <br>
+    </div>
+    <div class="watchlist-column">
+      <mat-card class="mat-elevation-z5">
+        <mat-card-header>
+          <div mat-card-avatar class="card-list-header-image"></div>
+          <mat-card-title class="label-text">My Watchlist</mat-card-title>
+        </mat-card-header>
+        <br>
+        <mat-card-content>
+          <mat-form-field>
+            <input matInput (keyup)="applyTableFilter($event.target.value)" placeholder="Filter">
+          </mat-form-field>
 
+          <table mat-table [dataSource]="loadedWatchlistDataSource" matSort class="mat-elevation-z5" matSort> Title
+
+            <ng-container matColumnDef="cardName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Card Name </th>
+              <td matTooltip="Click the card name to view the card!" mat-cell *matCellDef="let element" span (click)="openViewCardDialog(element.multiverseId)">{{element.cardName}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="setName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Set Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.setName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="startingPrice">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Starting Price </th>
+              <td mat-cell *matCellDef="let element"> {{element.startingPrice | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lastPrice">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen Price </th>
+              <td mat-cell *matCellDef="let element"> {{element.lastSeenPrice | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="currentPrice">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Current Price </th>
+              <td mat-cell *matCellDef="let element"> {{element.currentPrice | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="isUpdating">
+              <th mat-header-cell *matHeaderCellDef mat-header></th>
+              <mat-cell *matCellDef="let row">
+                <mat-progress-bar mode="buffer" *ngIf="row.isUpdating"></mat-progress-bar>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef mat-header></th>
+              <mat-cell *matCellDef="let row" style="display: flex">
+                <button mat-stroked-button color="primary" (click)="removeCardFromWatchlistApi(row.multiverseId)">Remove!</button>
+                &nbsp;&nbsp;
+                <button mat-stroked-button color="primary" (click)="openViewCardDialog(row.multiverseId)">View card!</button>
+                &nbsp;&nbsp;
+                <button matTooltip="Warning - manual edits can cause unexpected behavior!" mat-stroked-button color="warn">Manually edit! (Non-functional) </button>
+              </mat-cell>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <br>
+
+          <progress-bar-button [options]="fetchCardsButtonOptions" (click)="getWatchlistItemsFromApi()"></progress-bar-button>
+          &nbsp;&nbsp;
+          <progress-bar-button [options]="updateCardPricesButtonOptions" (click)="updateAllCardPricesFromApi()"></progress-bar-button>
+          <br>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
   <br>
   <mat-divider></mat-divider>
   <br>
 
-  <mat-card class="mat-elevation-z5">
-    <mat-card-header>
-      <div mat-card-avatar class="card-list-header-image"></div>
-      <mat-card-title class="label-text">My watchlist:</mat-card-title>
-    </mat-card-header>
-    <br>
-    <mat-card-content>
-      <mat-form-field>
-        <input matInput (keyup)="applyTableFilter($event.target.value)" placeholder="Filter">
-      </mat-form-field>
 
-      <table mat-table [dataSource]="loadedWatchlistDataSource" matSort class="mat-elevation-z5" matSort> Title
-
-        <ng-container matColumnDef="cardName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Card Name </th>
-          <td matTooltip="Click the card name to view the card!" mat-cell *matCellDef="let element" span (click)="openViewCardDialog(element.multiverseId)">{{element.cardName}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="setName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Set Name </th>
-          <td mat-cell *matCellDef="let element"> {{element.setName}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="startingPrice">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Starting Price </th>
-          <td mat-cell *matCellDef="let element"> {{element.startingPrice | currency}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="lastPrice">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen Price </th>
-          <td mat-cell *matCellDef="let element"> {{element.lastSeenPrice | currency}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="currentPrice">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Current Price </th>
-          <td mat-cell *matCellDef="let element"> {{element.currentPrice | currency}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="isUpdating">
-          <th mat-header-cell *matHeaderCellDef mat-header></th>
-          <mat-cell *matCellDef="let row">
-            <mat-progress-bar mode="buffer" *ngIf="row.isUpdating"></mat-progress-bar>
-          </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef mat-header></th>
-          <mat-cell *matCellDef="let row" style="display: flex">
-            <button mat-stroked-button color="primary" (click)="removeCardFromWatchlistApi(row.multiverseId)">Remove!</button>
-            &nbsp;&nbsp;
-            <button mat-stroked-button color="primary" (click)="openViewCardDialog(row.multiverseId)">View card!</button>
-            &nbsp;&nbsp;
-            <button matTooltip="Warning - manual edits can cause unexpected behavior!" mat-stroked-button color="warn">Manually
-              edit! (Non-functional) </button>
-          </mat-cell>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-      <br>
-
-      <progress-bar-button [options]="fetchCardsButtonOptions" (click)="getWatchlistItemsFromApi()"></progress-bar-button>
-      &nbsp;&nbsp;
-      <progress-bar-button [options]="updateCardPricesButtonOptions" (click)="updateAllCardPricesFromApi()"></progress-bar-button>
-      <br>
-    </mat-card-content>
-  </mat-card>
   <mat-divider></mat-divider>
 </div>
 <div *ngIf="isDevelopment">

@@ -1,8 +1,8 @@
 /* Style the header with a grey background and some padding */
 .header {
-  margin: -10px -9999rem;
+  margin: -10px -8px;
   /* add back negative margin value */
-  padding: 10px 9999rem;
+  padding: 10px 8px;
   color:white;
   background-color: black;
   overflow-x: hidden;

@@ -80,6 +80,7 @@ export class MtgWatchlistComponent implements OnInit {
   public currentlyLoadedCardName: string;
   public isDevelopment: boolean = !environment.production;
   public possibleCardNames: string[] = [];
+  public gridListColumnCount: number;
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -90,12 +91,17 @@ export class MtgWatchlistComponent implements OnInit {
     public dialog: MatDialog) { }
 
   ngOnInit() {
+    this.gridListColumnCount = (window.innerWidth <= 400) ? 1 : 2;
     this.loadedWatchlistDataSource.sort = this.sort;
     this.accessToken = null;
     this.tokenManagerService.myAccessToken$.subscribe((accessToken) => {
       this.accessToken = accessToken;
     }
     );
+  }
+
+  public onResize(): void {
+    this.gridListColumnCount = (window.innerWidth <= 400) ? 1 : 2;
   }
 
   public isAuthenticated(): boolean {
@@ -186,7 +192,17 @@ export class MtgWatchlistComponent implements OnInit {
             var responseObject = JSON.parse(JSON.stringify(response));
             this.newCard.cardPrice = responseObject.usd;
             element.lastSeenPrice = element.currentPrice;
-            element.currentPrice = responseObject.usd;
+            element.currentPrice = +responseObject.usd;
+
+            // Update our API. TODO: Figure out a way to make an aggregated call.
+            this.watchlistApiService.AddOrUpdateCardsToWatchList(this.accessToken, [ element ])
+            .subscribe(
+              response => {
+                //don't need to do anything
+              },
+              (error: HttpResponse<any>) => {
+                console.log(error);
+              });
             return element;
           },
           (error: HttpResponse<any>) => {
@@ -195,15 +211,6 @@ export class MtgWatchlistComponent implements OnInit {
           });
     }, this);
 
-    // Update our API
-    this.watchlistApiService.AddOrUpdateCardsToWatchList(this.accessToken, updatedMtgCardArray)
-      .subscribe(
-        response => {
-          //don't need to do anything
-        },
-        (error: HttpResponse<any>) => {
-          console.log(error);
-        });
     // update dataview
     this.loadedWatchlistDataSource.data = updatedMtgCardArray;
     this.updateCardPricesButtonOptions.active = false;

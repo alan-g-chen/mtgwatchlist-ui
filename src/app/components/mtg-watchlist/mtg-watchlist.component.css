@@ -6,21 +6,45 @@ table {
     width: 100%;
   }  
 
-  th.mat-sort-header-sorted {
-    color: black;
-  }
+th.mat-sort-header-sorted {
+  color: black;
+}
 
-  .add-card-header-image {
-    background-image: url('https://d1u5p3l4wpay3k.cloudfront.net/mtgsalvation_gamepedia/b/be/T.svg?version=ae7f99c29059c5efa3ecb02ed59843d5');
-    background-size: cover;
-  }
+.add-card-header-image {
+  background-image: url('https://d1u5p3l4wpay3k.cloudfront.net/mtgsalvation_gamepedia/b/be/T.svg?version=ae7f99c29059c5efa3ecb02ed59843d5');
+  background-size: cover;
+}
 
-  .card-list-header-image {
-    background-image: url('https://apprecs.org/gp/images/app-icons/300/11/monsieurlemarquis.magicthegathering.gamemanager.jpg');
-    background-size: cover;
-  }
+.card-list-header-image {
+  background-image: url('https://apprecs.org/gp/images/app-icons/300/11/monsieurlemarquis.magicthegathering.gamemanager.jpg');
+  background-size: cover;
+}
 
-  .label-text {
-    font-weight: bold;
-    font-size: 120%
+.label-text {
+  font-weight: bold;
+  font-size: 120%
+}
+
+.flex-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-card-column {
+  flex: 1;
+}
+
+.watchlist-column {
+  flex: 2;
+}
+
+.mat-card {
+  width: 98%;
+  min-width: 350px;
+}
+
+@media (max-width: 400px) {
+  .flex-grid {
+    display: block;
   }
+}
