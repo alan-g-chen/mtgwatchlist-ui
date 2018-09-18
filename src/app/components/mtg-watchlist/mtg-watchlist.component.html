@@ -13,12 +13,14 @@
           <mat-option *ngFor="let possibleCardName of possibleCardNames" [value]="possibleCardName">{{possibleCardName}}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field>
-        <mat-select required placeholder="Set Name" (selectionChange)="updateNewCardPriceFromApi()" [(value)]="newCard" (click)="fetchCardSetsFromApi()">
+      &nbsp;
+      <mat-form-field (click)="fetchCardSetsFromApi()">
+        <mat-select required placeholder="Set Name" (selectionChange)="updateNewCardPriceFromApi()" [(value)]="newCard">
           <mat-option *ngIf="cardOptions.length == 0" [value]="emptyCard">No set selected</mat-option>
           <mat-option *ngFor='let card of cardOptions' [value]='card'>{{card.setName}}</mat-option>
         </mat-select>
       </mat-form-field>
+      &nbsp;
       <mat-form-field>
         <input matInput placeholder={{pricePlaceholderValue}} value="" [(ngModel)]="this.newCard.currentPrice">
       </mat-form-field>
