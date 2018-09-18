@@ -77,7 +77,6 @@ export class MtgWatchlistComponent implements OnInit {
   public loadedWatchlistDataSource = new MatTableDataSource([]);
   public displayedColumns: string[] = ['cardName', 'setName', 'startingPrice', 'lastPrice', 'currentPrice', 'isUpdating', 'actions'];
   public newCard: MtgCardListing = this.emptyCard;
-  public priceLoading: boolean = false;
   public currentlyLoadedCardName: string;
   public isDevelopment: boolean = !environment.production;
   public possibleCardNames: string[] = [];
