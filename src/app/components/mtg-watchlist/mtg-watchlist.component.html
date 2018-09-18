@@ -7,8 +7,8 @@
     <br>
     <mat-card-content>
       <mat-form-field>
-        <input matInput required placeholder="Card Name" aria-label="Card Name" [matAutocomplete]="auto"
-          [(ngModel)]="newCard.cardName" (keyup)="typingCardName($event.target.value)">
+        <input matInput required placeholder="Card Name" aria-label="Card Name" [matAutocomplete]="auto" [(ngModel)]="newCard.cardName"
+          (keyup)="typingCardName($event.target.value)">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let possibleCardName of possibleCardNames" [value]="possibleCardName">{{possibleCardName}}</mat-option>
         </mat-autocomplete>
@@ -37,7 +37,7 @@
 
   <mat-card class="mat-elevation-z5">
     <mat-card-header>
-        <div mat-card-avatar class="card-list-header-image"></div>
+      <div mat-card-avatar class="card-list-header-image"></div>
       <mat-card-title class="label-text">My watchlist:</mat-card-title>
     </mat-card-header>
     <br>
@@ -105,17 +105,15 @@
   </mat-card>
   <mat-divider></mat-divider>
 </div>
-  <div *ngIf="isDevelopment">
-    Developer values
-    <pre>
+<div *ngIf="isDevelopment">
+  Developer values
+  <pre>
     newCard: {{newCard | json}}
   </pre>
-    <pre>
+  <pre>
     currentlyLoadedCardName: {{currentlyLoadedCardName}}
   </pre>
-    <pre>
+  <pre>
     cardOptions: {{cardOptions | json}}
   </pre>
-  </div>
-
-  {{ addCardButtonOptions | json }}
+</div>
