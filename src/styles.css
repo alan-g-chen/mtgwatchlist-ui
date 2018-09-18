@@ -4,7 +4,7 @@
 mat-icon{
     font-family: 'Material Icons' !important;
     }
-.mat-fab.mat-primary, .mat-flat-button.mat-primary, .mat-mini-fab.mat-primary, .mat-raised-button.mat-primary {
+ .mat-raised-button.mat-primary {
     background-color: rgba(0,0,0,.87) !important;
 }
 
