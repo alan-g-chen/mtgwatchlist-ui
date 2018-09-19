@@ -110,6 +110,7 @@ export class MtgWatchlistComponent implements OnInit {
 
   public openViewCardDialog(multiverseId: number): void {
     const dialogRef = this.dialog.open(GathererDialogComponent, {
+      height: 'flex',
       width: 'flex',
       data: { multiverseId: multiverseId }
     });

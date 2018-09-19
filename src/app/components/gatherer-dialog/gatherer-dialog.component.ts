@@ -1,8 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatTooltip } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ScryfallApiHttpClientService } from '../../services/scryfall-api-http-client/scryfall-api-http-client.service'
-import { isComponentView } from '@angular/core/src/view/util';
 
 @Component({
   selector: 'app-gatherer-dialog',
@@ -20,6 +19,7 @@ export class GathererDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data) {
     this.multiverseId = data.multiverseId;
     this.fetchCardImage();
+    this.dialogRef.updatePosition({ top: '0px', left: '0px' });
   }
 
   ngOnInit() {
