@@ -16,8 +16,9 @@
 
   .welcome-back-text {
     font-family: 'Proxima Nova', sans-serif;
-    font-weight: bold;
-    font-size: 100%;
+    font-weight: 400;
+    font-size: 80%;
+    padding-top: 10vh;
   }
 
   /* Float the link section to the right */
