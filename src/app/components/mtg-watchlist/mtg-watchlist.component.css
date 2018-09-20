@@ -11,12 +11,12 @@ th.mat-sort-header-sorted {
 }
 
 .add-card-header-image {
-  background-image: url('assets/Track.png');
+  background-image: url('https://can-zhao-uw.squarespace.com/s/Track.png');
   background-size: cover;
 }
 
 .card-list-header-image {
-  background-image: url('https://apprecs.org/gp/images/app-icons/300/11/monsieurlemarquis.magicthegathering.gamemanager.jpg');
+  background-image: url('https://can-zhao-uw.squarespace.com/s/List.png');
   background-size: cover;
 }
 
