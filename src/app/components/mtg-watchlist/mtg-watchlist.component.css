@@ -12,12 +12,12 @@ th.mat-sort-header-sorted {
 
 .add-card-header-image {
   background-image: url('https://can-zhao-uw.squarespace.com/s/Track.png');
-  background-size: 100%;
+  background-size: auto;
 }
 
 .card-list-header-image {
   background-image: url('https://can-zhao-uw.squarespace.com/s/List.png');
-  background-size: 100%;
+  background-size: auto;
 }
 
 .label-text {
