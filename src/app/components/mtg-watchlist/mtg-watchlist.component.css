@@ -13,11 +13,13 @@ th.mat-sort-header-sorted {
 .add-card-header-image {
   background-image: url('https://can-zhao-uw.squarespace.com/s/Track-3h89.png');
   background-size: contain;
+  padding-bottom: 20%;
 }
 
 .card-list-header-image {
   background-image: url('https://can-zhao-uw.squarespace.com/s/List.png');
   background-size: contain;
+  padding-bottom: 20%;
 }
 
 .label-text {
