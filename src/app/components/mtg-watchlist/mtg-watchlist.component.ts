@@ -7,6 +7,9 @@ import { MatTableDataSource, MatSort, MatDialog, MatProgressBar } from '@angular
 import { WatchlistApiHttpClientService } from '../../services/watchlist-api-http-client/watchlist-api-http-client.service'
 import { ScryfallApiHttpClientService } from '../../services/scryfall-api-http-client/scryfall-api-http-client.service'
 
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
 import { ButtonOpts } from 'mat-progress-buttons'
 import { GathererDialogComponent } from '../gatherer-dialog/gatherer-dialog.component';
 import { environment } from '../../../environments/environment';
@@ -31,6 +34,8 @@ const LOADING_CARD: MtgCardListing = {
 export class MtgWatchlistComponent implements OnInit {
 
   private accessToken: string;
+  private ngUnsubscribe = new Subject();
+
   public pricePlaceholderValue: string = "Current Price";
   public cardOptions: MtgCardListing[] = [];
   public fetchCardsButtonOptions: ButtonOpts = {
@@ -94,10 +99,14 @@ export class MtgWatchlistComponent implements OnInit {
     this.gridListColumnCount = (window.innerWidth <= 400) ? 1 : 2;
     this.loadedWatchlistDataSource.sort = this.sort;
     this.accessToken = null;
-    this.tokenManagerService.myAccessToken$.subscribe((accessToken) => {
-      this.accessToken = accessToken;
-    }
-    );
+    this.tokenManagerService.myAccessToken$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(accessToken => this.accessToken = accessToken);
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public onResize(): void {
@@ -115,7 +124,10 @@ export class MtgWatchlistComponent implements OnInit {
       data: { multiverseId: multiverseId }
     });
 
-    dialogRef.afterClosed().subscribe(result => { });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(result => { });
   }
 
   public updateNewCardPriceFromApi(): void {
@@ -124,6 +136,7 @@ export class MtgWatchlistComponent implements OnInit {
       this.newCard.currentPrice = null;
       this.scryService
         .GetMultiverseId(this.newCard.multiverseId)
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
             console.log(response)
@@ -132,7 +145,7 @@ export class MtgWatchlistComponent implements OnInit {
               this.newCard.currentPrice = responseObject.usd;
               this.pricePlaceholderValue = "Current Price";
               this.addCardButtonOptions.disabled = false;
-              if (this.loadedWatchlistDataSource.data.findIndex( x=> x.multiverseId == this.newCard.multiverseId) >= 0) {
+              if (this.loadedWatchlistDataSource.data.findIndex(x => x.multiverseId == this.newCard.multiverseId) >= 0) {
                 // card already exists, so update the button text
                 this.addCardButtonOptions.text = "Update my watchlist!";
               }
@@ -157,6 +170,7 @@ export class MtgWatchlistComponent implements OnInit {
     if (null != cardHint && cardHint.length >= 3) {
       this.scryService
         .GetAutoCompleteSuggestions(cardHint)
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
             var responseObject = JSON.parse(JSON.stringify(response));
@@ -188,6 +202,7 @@ export class MtgWatchlistComponent implements OnInit {
     updatedMtgCardArray.map(function (element) {
       element.isUpdating = false;
       this.scryService.GetMultiverseId(element.multiverseId)
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
             var responseObject = JSON.parse(JSON.stringify(response));
@@ -196,14 +211,15 @@ export class MtgWatchlistComponent implements OnInit {
             element.currentPrice = +responseObject.usd;
 
             // Update our API. TODO: Figure out a way to make an aggregated call.
-            this.watchlistApiService.AddOrUpdateCardsToWatchList(this.accessToken, [ element ])
-            .subscribe(
-              response => {
-                //don't need to do anything
-              },
-              (error: HttpResponse<any>) => {
-                console.log(error);
-              });
+            this.watchlistApiService.AddOrUpdateCardsToWatchList(this.accessToken, [element])
+              .pipe(takeUntil(this.ngUnsubscribe))
+              .subscribe(
+                response => {
+                  //don't need to do anything
+                },
+                (error: HttpResponse<any>) => {
+                  console.log(error);
+                });
             return element;
           },
           (error: HttpResponse<any>) => {
@@ -236,6 +252,7 @@ export class MtgWatchlistComponent implements OnInit {
       console.debug("Calling api for value: " + tempCardName);
       this.scryService
         .GetAllPrintingsOfCard(tempCardName)
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           res => {
             console.debug("Got result!");
@@ -269,7 +286,7 @@ export class MtgWatchlistComponent implements OnInit {
               this.cardOptions = [];
             }
             this.currentlyLoadedCardName = this.newCard.cardName;
-          });          
+          });
     }
   }
 
@@ -279,6 +296,7 @@ export class MtgWatchlistComponent implements OnInit {
 
     this.watchlistApiService
       .GetWatchlistResults(this.accessToken)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         res => {
           var listingResponse: MtgCardListing[] = <MtgCardListing[]>JSON.parse(JSON.stringify(res));
@@ -308,6 +326,7 @@ export class MtgWatchlistComponent implements OnInit {
       this.addCardButtonOptions.buttonColor = 'primary';
       this.watchlistApiService
         .AddOrUpdateCardsToWatchList(this.accessToken, [this.newCard])
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           res => {
             this.addCardButtonOptions.active = false;
@@ -322,7 +341,7 @@ export class MtgWatchlistComponent implements OnInit {
             console.error(error);
             this.addCardButtonOptions.buttonColor = 'warn';
             this.addCardButtonOptions.active = false;
-            this.addCardButtonOptions.text="Retry";
+            this.addCardButtonOptions.text = "Retry";
             // this.dialog.open(ErrorDialogComponent, {
             //   width: '250px',
             //   data: { error: error }
@@ -339,6 +358,7 @@ export class MtgWatchlistComponent implements OnInit {
     }
 
     this.watchlistApiService.RemoveCardsFromWatchlist(this.accessToken, [multiverseId])
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => {
           this.removeMultiverseIdFromDataTableIfExists(multiverseId);

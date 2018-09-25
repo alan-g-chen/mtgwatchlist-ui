@@ -1,6 +1,8 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { ScryfallApiHttpClientService } from '../../services/scryfall-api-http-client/scryfall-api-http-client.service'
 
 @Component({
@@ -10,10 +12,12 @@ import { ScryfallApiHttpClientService } from '../../services/scryfall-api-http-c
 })
 export class GathererDialogComponent implements OnInit {
 
+  private ngUnsubscribe = new Subject();
+
   public cardNotFound: boolean = false;
   public cardImageUri: string = null;
   public multiverseId: number;
-  
+
   constructor(private scryService: ScryfallApiHttpClientService,
     public dialogRef: MatDialogRef<GathererDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data) {
@@ -23,6 +27,11 @@ export class GathererDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public imageAvailable(): boolean {
@@ -38,6 +47,7 @@ export class GathererDialogComponent implements OnInit {
     this.cardNotFound = false;
     this.scryService
       .GetMultiverseId(this.multiverseId)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         res => {
           var resultingObject = JSON.parse(JSON.stringify(res));
