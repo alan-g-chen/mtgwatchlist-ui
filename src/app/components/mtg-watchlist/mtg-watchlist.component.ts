@@ -41,8 +41,8 @@ export class MtgWatchlistComponent implements OnInit {
   public fetchCardsButtonOptions: ButtonOpts = {
     active: false,
     text: 'Fetch my watch list!',
-    buttonColor: 'primary',
-    barColor: 'accent',
+    buttonColor: 'black',
+    barColor: 'primary',
     raised: true,
     mode: 'indeterminate',
     value: 0,
@@ -51,8 +51,8 @@ export class MtgWatchlistComponent implements OnInit {
   public updateCardPricesButtonOptions: ButtonOpts = {
     active: false,
     text: 'Update card prices!',
-    buttonColor: 'primary',
-    barColor: 'accent',
+    buttonColor: 'black',
+    barColor: 'primary',
     raised: true,
     mode: 'indeterminate',
     value: 0,
@@ -61,8 +61,8 @@ export class MtgWatchlistComponent implements OnInit {
   public addCardButtonOptions: ButtonOpts = {
     active: false,
     text: 'Add to my watch list!',
-    buttonColor: 'primary',
-    barColor: 'accent',
+    buttonColor: 'black',
+    barColor: 'primary',
     raised: true,
     mode: 'indeterminate',
     value: 0,
@@ -292,7 +292,7 @@ export class MtgWatchlistComponent implements OnInit {
 
   public getWatchlistItemsFromApi(): void {
     this.fetchCardsButtonOptions.active = true;
-    this.fetchCardsButtonOptions.buttonColor = 'primary';
+    this.fetchCardsButtonOptions.buttonColor = 'black';
 
     this.watchlistApiService
       .GetWatchlistResults(this.accessToken)
@@ -323,7 +323,7 @@ export class MtgWatchlistComponent implements OnInit {
     }
     else {
       this.addCardButtonOptions.active = true;
-      this.addCardButtonOptions.buttonColor = 'primary';
+      this.addCardButtonOptions.buttonColor = 'black';
       this.watchlistApiService
         .AddOrUpdateCardsToWatchList(this.accessToken, [this.newCard])
         .pipe(takeUntil(this.ngUnsubscribe))
@@ -379,7 +379,7 @@ export class MtgWatchlistComponent implements OnInit {
 
   private reinitializeComponentValues(): void {
     this.addCardButtonOptions.disabled = true;
-    this.addCardButtonOptions.buttonColor = 'primary';
+    this.addCardButtonOptions.buttonColor = 'black';
     this.addCardButtonOptions.text = 'Add to my watch list!';
     this.newCard = this.emptyCard;
     this.cardOptions = [];
