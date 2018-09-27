@@ -43,6 +43,12 @@ th.mat-sort-header-sorted {
   min-width: 350px;
 }
 
+.mat-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (max-width: 400px) {
   .flex-grid {
     display: block;
