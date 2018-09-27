@@ -26,7 +26,7 @@
     "angular-6-social-login": "^1.1.1",
     "core-js": "^2.5.4",
     "karma": "^3.0.0",
-    "mat-progress-buttons": "^6.0.1",
+    "mat-progress-buttons": "^7.0.5",
     "ng6-social-button": "^1.0.5",
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.3.2",
