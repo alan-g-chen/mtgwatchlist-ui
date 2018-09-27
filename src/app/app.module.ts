@@ -24,7 +24,10 @@ import {
   MatProgressBarModule,
   MatTooltipModule,
   MatSidenavModule,
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatSort,
+  MatSortModule,
+  MatPaginatorModule
 } from '@angular/material';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
@@ -84,10 +87,12 @@ export function getAuthServiceConfigs() {
     MatTableModule,
     MatDialogModule,
     MatSelectModule,
+    MatSortModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatSidenavModule,
     MatAutocompleteModule,
+    MatPaginatorModule,
     FormsModule,
     SocialLoginModule,
     Ng6SocialButtonModule,

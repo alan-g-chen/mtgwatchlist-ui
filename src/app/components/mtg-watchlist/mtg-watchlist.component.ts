@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TokenManagerService } from "../../services/token-manager/token-manager.service"
 import { MtgCardListing } from "../../mtg-card-listing"
-import { MatTableDataSource, MatSort, MatDialog, MatProgressBar } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialog, MatPaginator } from '@angular/material';
 import { WatchlistApiHttpClientService } from '../../services/watchlist-api-http-client/watchlist-api-http-client.service'
 import { ScryfallApiHttpClientService } from '../../services/scryfall-api-http-client/scryfall-api-http-client.service'
 
@@ -79,8 +79,8 @@ export class MtgWatchlistComponent implements OnInit {
     canBeFoil: false,
     isUpdating: false
   }
-  public loadedWatchlistDataSource = new MatTableDataSource([]);
-  public displayedColumns: string[] = ['cardName', 'setName', 'startingPrice', 'lastPrice', 'currentPrice', 'isUpdating', 'actions'];
+  public loadedWatchlistDataSource = new MatTableDataSource<MtgCardListing>([]);
+  public displayedColumns: string[] = ['cardName', 'setName', 'startingPrice', 'lastPrice', 'currentPrice', 'profit', 'actions'];
   public newCard: MtgCardListing = this.emptyCard;
   public currentlyLoadedCardName: string;
   public isDevelopment: boolean = !environment.production;
@@ -88,6 +88,7 @@ export class MtgWatchlistComponent implements OnInit {
   public gridListColumnCount: number;
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private tokenManagerService: TokenManagerService,
@@ -97,11 +98,15 @@ export class MtgWatchlistComponent implements OnInit {
 
   ngOnInit() {
     this.gridListColumnCount = (window.innerWidth <= 400) ? 1 : 2;
-    this.loadedWatchlistDataSource.sort = this.sort;
     this.accessToken = null;
     this.tokenManagerService.myAccessToken$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(accessToken => this.accessToken = accessToken);
+  }
+
+  ngAfterViewInit() {
+    this.loadedWatchlistDataSource.sort = this.sort;
+    this.loadedWatchlistDataSource.paginator = this.paginator;
   }
 
   ngOnDestroy() {
@@ -139,7 +144,6 @@ export class MtgWatchlistComponent implements OnInit {
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
-            console.log(response)
             var responseObject = JSON.parse(JSON.stringify(response));
             if (responseObject.usd != null && responseObject.usd != undefined) {
               this.newCard.currentPrice = responseObject.usd;
@@ -218,7 +222,7 @@ export class MtgWatchlistComponent implements OnInit {
                   //don't need to do anything
                 },
                 (error: HttpResponse<any>) => {
-                  console.log(error);
+                  console.error(error);
                 });
             return element;
           },
@@ -229,7 +233,7 @@ export class MtgWatchlistComponent implements OnInit {
     }, this);
 
     // update dataview
-    this.loadedWatchlistDataSource.data = updatedMtgCardArray;
+    this.updateTableDataSource(updatedMtgCardArray);
     this.updateCardPricesButtonOptions.active = false;
   }
 
@@ -300,7 +304,7 @@ export class MtgWatchlistComponent implements OnInit {
       .subscribe(
         res => {
           var listingResponse: MtgCardListing[] = <MtgCardListing[]>JSON.parse(JSON.stringify(res));
-          this.loadedWatchlistDataSource.data = listingResponse;
+          this.updateTableDataSource(listingResponse);
           this.fetchCardsButtonOptions.active = false;
         },
         (error: HttpResponse<any>) => {
@@ -330,10 +334,13 @@ export class MtgWatchlistComponent implements OnInit {
         .subscribe(
           res => {
             this.addCardButtonOptions.active = false;
-            this.removeMultiverseIdFromDataTableIfExists(this.newCard.multiverseId);
+            if (!this.removeMultiverseIdFromDataTableIfExists(this.newCard.multiverseId)) {
+              this.newCard.lastSeenPrice = this.newCard.currentPrice;
+              this.newCard.startingPrice = this.newCard.currentPrice;
+            }
             var tempArray = this.loadedWatchlistDataSource.data;
             tempArray.push(this.newCard);
-            this.loadedWatchlistDataSource.data = tempArray;
+            this.updateTableDataSource(tempArray);
             this.reinitializeComponentValues();
             this.addCardButtonOptions.text = "Watchlist updated!"
           },
@@ -368,13 +375,15 @@ export class MtgWatchlistComponent implements OnInit {
         });
   }
 
-  private removeMultiverseIdFromDataTableIfExists(multiverseId: number): void {
+  private removeMultiverseIdFromDataTableIfExists(multiverseId: number): boolean {
     var indexOfExistingCard = this.loadedWatchlistDataSource.data.findIndex(x => x.multiverseId == multiverseId);
     if (indexOfExistingCard >= 0) {
       var tempArray = this.loadedWatchlistDataSource.data;
       tempArray.splice(indexOfExistingCard, 1);
-      this.loadedWatchlistDataSource.data = tempArray;
+      this.updateTableDataSource(tempArray);
+      return true;
     }
+    return false;
   }
 
   private reinitializeComponentValues(): void {
@@ -389,6 +398,22 @@ export class MtgWatchlistComponent implements OnInit {
 
   applyTableFilter(filterValue: string) {
     this.loadedWatchlistDataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  updateTableDataSource(newData: MtgCardListing[]) {
+    this.loadedWatchlistDataSource.data = newData;
+    this.loadedWatchlistDataSource.paginator = this.paginator;
+    this.loadedWatchlistDataSource.sort = this.sort;
+  }
+
+  getStyleBasedOnProfit(profit: number) {
+    let maxFontWeight: number = 1000;
+    let fontWeight = (Math.abs(profit) * 250) > maxFontWeight ? maxFontWeight : (Math.abs(profit) * 250);
+    let styles = {
+      'color': (profit < 0) ? 'darkred' : 'forestgreen',
+      'font-weight': fontWeight
+    };
+    return styles;
   }
 }
 
