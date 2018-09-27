@@ -46,7 +46,7 @@ import { ScryfallApiHttpClientService } from './services/scryfall-api-http-clien
 
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component'
 
-import { MatProgressButtons } from 'mat-progress-buttons';
+import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { GathererDialogComponent } from './components/gatherer-dialog/gatherer-dialog.component';
 
 export function getAuthServiceConfigs() {
@@ -98,7 +98,7 @@ export function getAuthServiceConfigs() {
     Ng6SocialButtonModule,
     HttpClientModule,
     HttpModule,
-    MatProgressButtons,
+    MatProgressButtonsModule,
     ReactiveFormsModule
   ],
   exports: [ ],
