@@ -10,7 +10,7 @@ import { ScryfallApiHttpClientService } from '../../services/scryfall-api-http-c
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { ButtonOpts } from 'mat-progress-buttons'
+import { MatProgressButtonOptions } from 'mat-progress-buttons'
 import { GathererDialogComponent } from '../gatherer-dialog/gatherer-dialog.component';
 import { environment } from '../../../environments/environment';
 
@@ -38,7 +38,7 @@ export class MtgWatchlistComponent implements OnInit {
 
   public pricePlaceholderValue: string = "Current Price";
   public cardOptions: MtgCardListing[] = [];
-  public fetchCardsButtonOptions: ButtonOpts = {
+  public fetchCardsButtonOptions: MatProgressButtonOptions = {
     active: false,
     text: 'Fetch my watch list!',
     buttonColor: 'black',
@@ -48,7 +48,7 @@ export class MtgWatchlistComponent implements OnInit {
     value: 0,
     disabled: false
   }
-  public updateCardPricesButtonOptions: ButtonOpts = {
+  public updateCardPricesButtonOptions: MatProgressButtonOptions = {
     active: false,
     text: 'Update card prices!',
     buttonColor: 'black',
@@ -58,7 +58,7 @@ export class MtgWatchlistComponent implements OnInit {
     value: 0,
     disabled: false
   }
-  public addCardButtonOptions: ButtonOpts = {
+  public addCardButtonOptions: MatProgressButtonOptions = {
     active: false,
     text: 'Add to my watch list!',
     buttonColor: 'black',

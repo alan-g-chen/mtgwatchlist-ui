@@ -28,7 +28,7 @@
           </mat-form-field>
           <br>
           <br>
-          <progress-bar-button [options]="addCardButtonOptions" (click)="addNewCardToWatchlistApi()"></progress-bar-button>
+          <mat-bar-button [options]="addCardButtonOptions" (click)="addNewCardToWatchlistApi()"></mat-bar-button>
           <button mat-button type="button" class="btn btn-outline-secondary" (click)="openViewCardDialog(newCard.multiverseId)"
             *ngIf="newCard.multiverseId != null && newCard.multiverseId > 0">View card!</button>
         </mat-card-content>
@@ -106,9 +106,9 @@
           <mat-paginator [pageSizeOptions]="[20, 50, 100]"></mat-paginator>
           <br>
 
-          <progress-bar-button [options]="fetchCardsButtonOptions" (click)="getWatchlistItemsFromApi()"></progress-bar-button>
+          <mat-bar-button [options]="fetchCardsButtonOptions" (click)="getWatchlistItemsFromApi()"></mat-bar-button>
           &nbsp;&nbsp;
-          <progress-bar-button [options]="updateCardPricesButtonOptions" (click)="updateAllCardPricesFromApi()"></progress-bar-button>
+          <mat-bar-button [options]="updateCardPricesButtonOptions" (click)="updateAllCardPricesFromApi()"></mat-bar-button>
           <br>
         </mat-card-content>
       </mat-card>
