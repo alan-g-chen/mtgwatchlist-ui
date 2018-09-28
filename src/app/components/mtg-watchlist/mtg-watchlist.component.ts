@@ -1,5 +1,4 @@
 import { HttpResponse } from '@angular/common/http';
-import { FormControl } from '@angular/forms';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TokenManagerService } from "../../services/token-manager/token-manager.service"
 import { MtgCardListing } from "../../mtg-card-listing"
@@ -18,7 +17,7 @@ const LOADING_CARD: MtgCardListing = {
   cardName: "Loading cards...",
   setName: "Loading sets...",
   currentPrice: null,
-  startingPrice: null,
+  startingPrice: null,  
   lastSeenPrice: null,
   multiverseId: null,
   isFoil: false,
@@ -35,6 +34,7 @@ export class MtgWatchlistComponent implements OnInit {
 
   private accessToken: string;
   private ngUnsubscribe = new Subject();
+  private isFirstLoad: boolean = true;
 
   public pricePlaceholderValue: string = "Current Price";
   public cardOptions: MtgCardListing[] = [];
@@ -119,6 +119,10 @@ export class MtgWatchlistComponent implements OnInit {
   }
 
   public isAuthenticated(): boolean {
+    if (null != this.accessToken && this.isFirstLoad) {
+      this.isFirstLoad = false;
+      this.getWatchlistItemsFromApi();
+    }
     return (null != this.accessToken);
   }
 
