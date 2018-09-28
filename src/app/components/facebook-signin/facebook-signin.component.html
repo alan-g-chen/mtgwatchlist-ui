@@ -3,15 +3,22 @@
     <img src="assets/logo.png" style="width: 10%;">&nbsp;&nbsp;MTGWatchlist
   </span>
   <div class="header-right">
-    <facebook-login-button (socialUser)="getSocialUser($event)" *ngIf="!isAuthenticated()"></facebook-login-button>
     <span class="welcome-back-text" *ngIf="isAuthenticated()">Welcome back, {{userName}}!</span>
-    <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isAuthenticated()">
+    <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu" [overlapTrigger]="false">
-      <button mat-menu-item (click)="signOut()" color="primary">
+      <button mat-menu-item (click)="signOut()" color="primary" *ngIf="isAuthenticated()">
         <mat-icon>arrow_right_alt</mat-icon>
         Log out
+      </button>
+      <button mat-menu-item (click)="socialSignIn('facebook')" color="primary" *ngIf="!isAuthenticated()">
+        <mat-icon>perm_identity</mat-icon>
+        Sign in with Facebook
+      </button>
+      <button mat-menu-item (click)="facebookSharing(shareObj)" color="primary" *ngIf="isAuthenticated()">
+        <mat-icon>face</mat-icon>
+        Share us on Facebook!
       </button>
     </mat-menu>
   </div>

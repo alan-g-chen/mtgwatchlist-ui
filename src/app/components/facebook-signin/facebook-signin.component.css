@@ -21,6 +21,12 @@
     padding-top: 10vh;
   }
 
+  .white-text {
+    font-family: 'Proxima Nova', sans-serif;
+    font-weight: 400;
+    font-size: 80%;
+  }
+
   /* Float the link section to the right */
   .header-right {
     float: right;

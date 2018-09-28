@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SocialService } from "ng6-social-button";
-import { MatButton } from "@angular/material"
+import { SocialService, FacebookLoginProvider } from "ng6-social-button";
 import { TokenManagerService } from "../../services/token-manager/token-manager.service"
 
 @Component({
@@ -13,6 +12,11 @@ export class FacebookSigninComponent implements OnInit {
   private userToken: string;
 
   public userName: string;
+
+  public shareObj = {
+    href: "https://mtgwatchlist-ui.azurewebsites.net",
+    hashtag:"#MtWatchlist"
+  };
 
   constructor(private socialAuthService: SocialService, private tokenManagerService: TokenManagerService) { }
 
@@ -29,10 +33,22 @@ export class FacebookSigninComponent implements OnInit {
     }
   }
 
-  public getSocialUser(socialUser) {
-    this.userName = socialUser.name;
-    this.userToken = socialUser.accessToken;
-    this.tokenManagerService.myAccessToken(this.userToken);
+  public socialSignIn(socialPlatform: string) {
+    let socialPlatformProvider;
+    if (socialPlatform == "facebook") {
+      socialPlatformProvider = FacebookLoginProvider.PROVIDER_TYPE;
+    }
+
+    this.socialAuthService.signIn(socialPlatformProvider).then(
+      (socialUser) => {
+        this.userName = socialUser.name;
+        this.userToken = socialUser.accessToken;
+        this.tokenManagerService.myAccessToken(this.userToken);
+      });
+  }
+
+  public facebookSharing(shareObj: any) {
+    this.socialAuthService.facebookSharing(shareObj);
   }
 
   public isAuthenticated(): boolean {
